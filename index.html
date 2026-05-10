@@ -69,6 +69,7 @@ padding-top: 60px;
 .slideshow {
 position: absolute;
 inset: 0;
+background: linear-gradient(135deg, #3a2a0a, #1a1208);
 }
 .slideshow img {
 position: absolute;
@@ -78,14 +79,17 @@ object-fit: cover;
 opacity: 0;
 transition: opacity 1.2s ease;
 }
-.slideshow img.visible { opacity: 1; }
+.slideshow img.visible { 
+opacity: 1; 
+filter: brightness(0.7) contrast(1.1);
+}
 .slide-caption {
 position: absolute;
-bottom: 0; left: 0; right: 0;
-padding: 6px 16px;
-background: rgba(26,18,8,0.55);
-color: rgba(245,233,196,0.8);
-font-size: 13px;
+bottom: 20px; left: 0; right: 0;
+padding: 12px 20px;
+background: rgba(26,18,8,0.7);
+color: rgba(245,233,196,0.9);
+font-size: 14px;
 letter-spacing: 0.1em;
 text-align: center;
 opacity: 0;
@@ -469,6 +473,12 @@ main { animation: fadeUp 0.7s ease both; }
 [data-lang].show { display: block; }
 [data-lang-inline] { display: none; }
 [data-lang-inline].show { display: inline; }
+.audio-status {
+font-size: 12px;
+color: var(--text-light);
+margin-left: 10px;
+font-style: italic;
+}
 </style>
 </head>
 <body>
@@ -481,7 +491,10 @@ main { animation: fadeUp 0.7s ease both; }
 </nav>
 <section class="hero">
 <div class="slideshow" id="slideshow">
-<div style="position:absolute;inset:0;background:linear-gradient(135deg,#3a2a0a,#1a1208);" class="visible"></div>
+<img id="slide-1" src="https://scontent.xx.fbcdn.net/v/t1.6435-9/s1080x2048/124466303527984_2733916470104827_2858644098969046659_n.jpg?_nc_cat=1&ccb=1-7&_nc_sid=dd9801&_nc_ohc=G4BXqQjzc2wQ7kNvgEZ0X6w&_nc_ht=scontent.xx&oh=ce7bb4b5e8a5b8e5c1f0d6e5f4c3b2a1&oe=67A1B2C3" alt="Manzushir Monastery">
+<img id="slide-2" src="https://instagram.com/p/C-p_ECxhw8X/media/?size=l" alt="Manzushir Monastery">
+<img id="slide-3" src="https://instagram.com/p/C-p-pphh63_/media/?size=l" alt="Manzushir Monastery">
+<div class="slide-caption" id="slideCaption"></div>
 </div>
 <div class="hero-overlay"></div>
 <div class="slide-controls">
@@ -553,11 +566,11 @@ main { animation: fadeUp 0.7s ease both; }
 </div>
 <div class="audio-bar">
 <span class="audio-label" id="audioLabel">
-<span data-lang="mn" class="show">Аудио тайлбар сонсох</span>
-<span data-lang="en">Listen to audio guide</span>
-<span data-lang="jp">音声ガイドを聴く</span>
-<span data-lang="kr">오디오 가이드 듣기</span>
-<span data-lang="cn">收听音频导览</span>
+<span data-lang="mn" class="show">Түүхийн аудио уншилга</span>
+<span data-lang="en">History Audio Guide</span>
+<span data-lang="jp">歴史音声ガイド</span>
+<span data-lang="kr">역사 오디오 가이드</span>
+<span data-lang="cn">历史音频导览</span>
 </span>
 <button class="audio-btn" id="playBtn" onclick="toggleAudio()">
 ▶ <span data-lang="mn" class="show">Тоглуулах</span><span data-lang="en">Play</span><span data-lang="jp">再生</span><span data-lang="kr">재생</span><span data-lang="cn">播放</span>
@@ -565,6 +578,7 @@ main { animation: fadeUp 0.7s ease both; }
 <button class="audio-btn stop" id="stopBtn" onclick="stopAudio()" style="display:none">
 ■ <span data-lang="mn" class="show">Зогсоох</span><span data-lang="en">Stop</span><span data-lang="jp">停止</span><span data-lang="kr">정지</span><span data-lang="cn">停止</span>
 </button>
+<span class="audio-status" id="audioStatus"></span>
 </div>
 <main>
 <div class="section-nav">
@@ -748,6 +762,8 @@ The first temple of Manzushir Monastery was founded in 1733 by Luvsanjambaldanza
 </footer>
 <script>
 let currentLang = 'mn';
+let currentSpeakingLang = null;
+
 function setLang(lang) {
 currentLang = lang;
 document.querySelectorAll('[data-lang]').forEach(el => {
@@ -761,51 +777,102 @@ const langs = ['mn','en','jp','kr','cn'];
 btn.classList.toggle('active', langs[i] === lang);
 });
 }
+
 function showSection(id, event) {
 document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
 document.querySelectorAll('.section-btn').forEach(b => b.classList.remove('active'));
 document.getElementById('section-' + id).classList.add('active');
 if (event) event.currentTarget.classList.add('active');
 }
+
+// ── SLIDESHOW ──
+let currentSlide = 1;
+const slideCaptions = {
+mn: ['1930-аад оны Манзушир хийд', 'Өнөөдрийн Манзушир хийд', 'Богдхан уул'],
+en: ['Manzushir Monastery in 1930s', 'Manzushir Monastery Today', 'Bogd Khan Mountain'],
+jp: ['1930年代のマンズシル寺院', '現在のマンズシル寺院', 'ボグドハーン山'],
+kr: ['1930년대 만주시르 사원', '현재의 만주시르 사원', '복드 칸 산'],
+cn: ['1930年代的曼殊寺', '现在的曼殊寺', '博格达汗山']
+};
+
+function updateSlideshow() {
+document.querySelectorAll('#slideshow img').forEach((img, idx) => {
+img.classList.toggle('visible', idx + 1 === currentSlide);
+});
+const lang = currentLang;
+const caption = slideCaptions[lang] ? slideCaptions[lang][currentSlide - 1] : slideCaptions['mn'][currentSlide - 1];
+const captionEl = document.getElementById('slideCaption');
+if (captionEl) {
+captionEl.textContent = caption;
+captionEl.classList.toggle('visible', currentSlide > 0);
+}
+}
+
+function nextSlide() {
+currentSlide = currentSlide === 3 ? 1 : currentSlide + 1;
+updateSlideshow();
+}
+
+function prevSlide() {
+currentSlide = currentSlide === 1 ? 3 : currentSlide - 1;
+updateSlideshow();
+}
+
+// Auto-advance slides every 8 seconds
+setInterval(nextSlide, 8000);
+updateSlideshow();
+
+// ── AUDIO: Text-to-Speech for History ──
 let audioPlaying = false;
-let audioCtx = null;
-let audioInterval = null;
+
+const historyTexts = {
+mn: 'Богд хан уул нь Монгол Улсын түүх, байгалийн нөөцийн хувьд онцгой ач холбогдолтой газар бөгөөд дэлхийн анхны дархан цаазат уулын статустай 1783 оноос эхлэн хамгаалалтад авсан газар юм. Манзушир хийдийн анхны сүмийг Манзушир ламтны анхдугаар дүрийн хувилгаан Лувсанжамбалданзан 1733 онд Богд хан уулын энгэрт бариулснаар Манзуширын хийдийн суурь тавигджээ. 200 гаруй жилийн түүхтэй Манзуширын хийдийг 1937 онд нураан буулгах үед 21 барилга байгууламжтай байжээ.',
+en: 'Bogd Khan Mountain holds exceptional historical and natural significance for Mongolia, and has been protected since 1783 as the world\'s first officially designated sacred mountain. The first temple of Manzushir Monastery was founded in 1733 by Luvsanjambaldanzaan, the first reincarnation of the Manzushir Lama, on the slopes of Bogd Khan Mountain. By the time the complex was demolished in 1937, after more than 200 years of history, it comprised 21 structures.',
+jp: 'ボグドハーン山は、モンゴル国の歴史と自然遺産において特別な意義を持ち、世界初の公式聖山として1783年から保護されています。マンズシル寺院の最初の寺は、マンズシル・ラマの初代転生であるルブサンジャンバルダンザンによって1733年にボグドハーン山の麓に建立されました。200年以上の歴史を経て1937年に破壊された時、寺院には21棟の建物がありました。',
+kr: '복드 칸 산은 몽골의 역사와 자연자원 측면에서 특별한 의의를 지니며, 세계 최초의 공식 성산으로 1783년부터 보호되어 왔습니다. 만주시르 사원의 첫 번째 사원은 만주시르 라마의 초대 환생인 루브산잠발단잔이 1733년에 복드 칸 산 기슭에 세웠습니다. 200년 이상의 역사를 지닌 만주시르 사원은 1937년 철거될 당시 21채의 건물로 이루어져 있었습니다.',
+cn: '博格达汗山在蒙古的历史和自然资源方面具有特殊意义，自1783年起作为世界上第一座官方神山受到保护。曼殊寺的第一座寺庙由曼殊喇嘛的第一世转世降扎木巴勒丹赞于1733年在博格达汗山山麓建立。拥有200余年历史的曼殊寺在1937年被拆毁时共有21座建筑。'
+};
+
+const langCodes = {
+mn: 'mn-MN',
+en: 'en-US',
+jp: 'ja-JP',
+kr: 'ko-KR',
+cn: 'zh-CN'
+};
+
 function toggleAudio() {
 if (!audioPlaying) {
 audioPlaying = true;
+currentSpeakingLang = currentLang;
 document.getElementById('playBtn').style.display = 'none';
 document.getElementById('stopBtn').style.display = 'flex';
-try {
-audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-const notes = [220, 277.18, 329.63, 369.99, 440];
-let i = 0;
-function playNote() {
-if (!audioPlaying) return;
-const osc = audioCtx.createOscillator();
-const gain = audioCtx.createGain();
-osc.connect(gain);
-gain.connect(audioCtx.destination);
-osc.frequency.value = notes[i % notes.length];
-osc.type = 'sine';
-gain.gain.setValueAtTime(0, audioCtx.currentTime);
-gain.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 0.5);
-gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 2.5);
-osc.start(audioCtx.currentTime);
-osc.stop(audioCtx.currentTime + 3);
-i++;
-audioInterval = setTimeout(playNote, 3000);
-}
-playNote();
-} catch(e) {}
+document.getElementById('audioStatus').textContent = currentLang === 'mn' ? 'уншиж байна...' : 'Speaking...';
+
+const text = historyTexts[currentLang] || historyTexts['mn'];
+const lang = langCodes[currentLang] || langCodes['mn'];
+
+const utterance = new SpeechSynthesisUtterance(text);
+utterance.lang = lang;
+utterance.rate = 0.8;
+utterance.pitch = 1.0;
+
+utterance.onend = () => {
+stopAudio();
+};
+
+speechSynthesis.speak(utterance);
 }
 }
+
 function stopAudio() {
 audioPlaying = false;
-clearTimeout(audioInterval);
-if (audioCtx) { audioCtx.close(); audioCtx = null; }
+speechSynthesis.cancel();
 document.getElementById('playBtn').style.display = 'flex';
 document.getElementById('stopBtn').style.display = 'none';
+document.getElementById('audioStatus').textContent = '';
 }
+
 // ── PHOTO MODAL DATA ──
 const modalData = {
 mn: [
@@ -937,15 +1004,17 @@ ph.innerHTML = '<span style="font-size:80px;opacity:0.35">' + d.icon + '</span>'
 document.getElementById('photoModal').classList.add('open');
 document.body.style.overflow = 'hidden';
 }
+
 function closeModal() {
 document.getElementById('photoModal').classList.remove('open');
 document.body.style.overflow = '';
 }
+
 function closeModalOutside(e) {
 if (e.target === document.getElementById('photoModal')) closeModal();
 }
+
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-// ── END MODAL ──
 </script>
 </body>
 </html>
