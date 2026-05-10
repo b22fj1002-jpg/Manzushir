@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>Манзушир хийд · Manzushir Monastery</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Noto+Sans+Mongolian&display=swap" rel="stylesheet" />
+<style>
+:root {
+--gold: #b8952a;
+--gold-light: #d4b04a;
+--gold-pale: #f5e9c4;
+--dark: #1a1208;
+--dark-mid: #2c1f0a;
+--text: #3a2a0a;
+--text-light: #7a6030;
+--cream: #faf5e8;
+--cream-dark: #f0e8d0;
+--border: rgba(184, 149, 42, 0.25);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+background: var(--cream);
+color: var(--text);
+font-family: 'Cormorant Garamond', 'Noto Serif JP', Georgia, serif;
+line-height: 1.7;
+overflow-x: hidden;
+}
+nav {
+position: fixed;
+top: 0; left: 0; right: 0;
+z-index: 100;
+background: rgba(26, 18, 8, 0.92);
+backdrop-filter: blur(10px);
+display: flex;
+justify-content: center;
+gap: 6px;
+padding: 10px 20px;
+flex-wrap: wrap;
+border-bottom: 1px solid rgba(184,149,42,0.3);
+}
+.lang-btn {
+background: none;
+border: 1px solid rgba(184,149,42,0.4);
+color: #c8a84a;
+padding: 5px 14px;
+border-radius: 20px;
+cursor: pointer;
+font-size: 13px;
+letter-spacing: 0.04em;
+transition: all 0.25s;
+font-family: inherit;
+}
+.lang-btn:hover, .lang-btn.active {
+background: var(--gold);
+color: var(--dark);
+border-color: var(--gold);
+}
+.hero {
+position: relative;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+justify-content: flex-end;
+padding-bottom: 80px;
+overflow: hidden;
+padding-top: 60px;
+}
+.slideshow {
+position: absolute;
+inset: 0;
+}
+.slideshow img {
+position: absolute;
+inset: 0;
+width: 100%; height: 100%;
+object-fit: cover;
+opacity: 0;
+transition: opacity 1.2s ease;
+}
+.slideshow img.visible { opacity: 1; }
+.slide-caption {
+position: absolute;
+bottom: 0; left: 0; right: 0;
+padding: 6px 16px;
+background: rgba(26,18,8,0.55);
+color: rgba(245,233,196,0.8);
+font-size: 13px;
+letter-spacing: 0.1em;
+text-align: center;
+opacity: 0;
+transition: opacity 0.6s;
+}
+.slide-caption.visible { opacity: 1; }
+.hero-overlay {
+position: absolute;
+inset: 0;
+background: linear-gradient(
+to bottom,
+rgba(26,18,8,0.15) 0%,
+rgba(26,18,8,0.02) 40%,
+rgba(26,18,8,0.6) 100%
+);
+}
+.slide-controls {
+position: absolute;
+bottom: 50%; transform: translateY(50%);
+width: 100%;
+display: flex;
+justify-content: space-between;
+padding: 0 20px;
+pointer-events: none;
+z-index: 5;
+}
+.slide-btn {
+background: rgba(26,18,8,0.5);
+border: 1px solid rgba(184,149,42,0.5);
+color: var(--gold-pale);
+width: 44px; height: 44px;
+border-radius: 50%;
+font-size: 20px;
+cursor: pointer;
+pointer-events: all;
+display: flex; align-items: center; justify-content: center;
+transition: all 0.2s;
+}
+.slide-btn:hover {
+background: rgba(184,149,42,0.8);
+color: var(--dark);
+}
+.hero-text {
+position: relative;
+z-index: 2;
+text-align: center;
+color: var(--gold-pale);
+padding: 0 20px;
+}
+.hero-divider {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 12px;
+margin-bottom: 18px;
+color: var(--gold);
+font-size: 18px;
+letter-spacing: 0.3em;
+}
+.hero-title {
+font-size: clamp(2.2rem, 6vw, 4.5rem);
+font-weight: 300;
+letter-spacing: 0.05em;
+line-height: 1.2;
+text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+margin-bottom: 10px;
+}
+.hero-subtitle {
+font-size: clamp(0.9rem, 2vw, 1.15rem);
+letter-spacing: 0.2em;
+color: rgba(245,233,196,0.75);
+text-transform: uppercase;
+margin-bottom: 8px;
+}
+.hero-year {
+font-size: 1rem;
+color: var(--gold-light);
+letter-spacing: 0.15em;
+}
+.photo-row {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 0;
+background: var(--dark);
+}
+.photo-item {
+position: relative;
+overflow: hidden;
+aspect-ratio: 4/3;
+}
+.photo-item img {
+width: 100%; height: 100%;
+object-fit: cover;
+filter: sepia(20%) brightness(0.85);
+transition: transform 0.6s ease, filter 0.4s;
+}
+.photo-item:hover img {
+transform: scale(1.06);
+filter: sepia(0%) brightness(0.95);
+}
+.photo-item .label {
+position: absolute;
+bottom: 0; left: 0; right: 0;
+background: linear-gradient(transparent, rgba(26,18,8,0.85));
+color: var(--gold-pale);
+padding: 20px 14px 10px;
+font-size: 13px;
+letter-spacing: 0.12em;
+text-align: center;
+}
+.audio-bar {
+background: var(--dark-mid);
+border-top: 1px solid var(--border);
+border-bottom: 1px solid var(--border);
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 16px;
+padding: 14px 20px;
+flex-wrap: wrap;
+}
+.audio-label {
+color: var(--gold-pale);
+font-size: 14px;
+letter-spacing: 0.1em;
+}
+.audio-btn {
+background: none;
+border: 1px solid var(--gold);
+color: var(--gold);
+padding: 7px 20px;
+border-radius: 3px;
+cursor: pointer;
+font-size: 13px;
+letter-spacing: 0.08em;
+transition: all 0.2s;
+font-family: inherit;
+display: flex; align-items: center; gap: 6px;
+}
+.audio-btn:hover {
+background: var(--gold);
+color: var(--dark);
+}
+.audio-btn.stop {
+border-color: #c44;
+color: #c44;
+}
+.audio-btn.stop:hover { background: #c44; color: #fff; }
+main {
+max-width: 820px;
+margin: 0 auto;
+padding: 70px 24px 60px;
+}
+.section-nav {
+display: flex;
+justify-content: center;
+gap: 6px;
+margin-bottom: 50px;
+flex-wrap: wrap;
+}
+.section-btn {
+background: none;
+border: none;
+color: var(--text-light);
+font-size: 15px;
+letter-spacing: 0.12em;
+cursor: pointer;
+padding: 6px 16px;
+border-bottom: 2px solid transparent;
+transition: all 0.2s;
+font-family: inherit;
+}
+.section-btn:hover, .section-btn.active {
+color: var(--gold);
+border-bottom-color: var(--gold);
+}
+.content-section { display: none; }
+.content-section.active { display: block; }
+.history-intro {
+font-size: clamp(1rem, 2.5vw, 1.2rem);
+line-height: 1.85;
+color: var(--text);
+margin-bottom: 36px;
+}
+.pull-quote {
+margin: 40px 0;
+padding: 24px 32px;
+border-left: 3px solid var(--gold);
+background: rgba(184,149,42,0.06);
+font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+font-style: italic;
+color: var(--dark-mid);
+line-height: 1.7;
+}
+.history-body {
+font-size: 1.05rem;
+line-height: 1.9;
+color: var(--text);
+}
+.stats {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 1px;
+background: var(--border);
+margin: 50px 0;
+border: 1px solid var(--border);
+}
+.stat {
+background: var(--cream);
+padding: 24px 16px;
+text-align: center;
+}
+.stat-number {
+font-size: 2rem;
+font-weight: 600;
+color: var(--gold);
+display: block;
+letter-spacing: 0.03em;
+}
+.stat-label {
+font-size: 12px;
+letter-spacing: 0.12em;
+color: var(--text-light);
+margin-top: 4px;
+line-height: 1.4;
+}
+.location-text {
+font-size: 1.05rem;
+line-height: 1.9;
+}
+.map-placeholder {
+margin-top: 30px;
+background: var(--cream-dark);
+border: 1px solid var(--border);
+border-radius: 4px;
+padding: 40px 20px;
+text-align: center;
+color: var(--text-light);
+font-size: 14px;
+letter-spacing: 0.1em;
+}
+.now-text {
+font-size: 1.05rem;
+line-height: 1.9;
+}
+/* ── PHOTO MODAL ── */
+.photo-item {
+cursor: pointer;
+}
+.photo-item::after {
+content: '↗';
+position: absolute;
+top: 12px; right: 12px;
+background: rgba(184,149,42,0.85);
+color: #1a1208;
+width: 28px; height: 28px;
+border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+font-size: 13px;
+opacity: 0;
+transition: opacity 0.25s;
+}
+.photo-item:hover::after { opacity: 1; }
+.modal-overlay {
+display: none;
+position: fixed;
+inset: 0;
+z-index: 500;
+background: rgba(10,7,3,0.88);
+align-items: center;
+justify-content: center;
+padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+background: var(--cream);
+max-width: 720px;
+width: 100%;
+border: 1px solid rgba(184,149,42,0.3);
+border-radius: 4px;
+overflow: hidden;
+animation: modalIn 0.3s ease;
+max-height: 90vh;
+display: flex;
+flex-direction: column;
+}
+@keyframes modalIn {
+from { opacity: 0; transform: translateY(16px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.modal-img-wrap {
+position: relative;
+width: 100%;
+aspect-ratio: 16/9;
+background: var(--dark);
+overflow: hidden;
+flex-shrink: 0;
+}
+.modal-img-wrap .modal-placeholder {
+width: 100%; height: 100%;
+display: flex; align-items: center; justify-content: center;
+font-size: 80px;
+}
+.modal-img-wrap img {
+width: 100%; height: 100%;
+object-fit: cover;
+}
+.modal-body {
+padding: 28px 32px 32px;
+overflow-y: auto;
+}
+.modal-era {
+font-size: 12px;
+letter-spacing: 0.2em;
+color: var(--gold);
+text-transform: uppercase;
+margin-bottom: 10px;
+}
+.modal-title {
+font-size: 1.6rem;
+font-weight: 400;
+color: var(--dark-mid);
+margin-bottom: 16px;
+line-height: 1.3;
+}
+.modal-text {
+font-size: 1.05rem;
+line-height: 1.9;
+color: var(--text);
+}
+.modal-close {
+position: absolute;
+top: 14px; right: 14px;
+background: rgba(26,18,8,0.6);
+border: 1px solid rgba(184,149,42,0.4);
+color: var(--gold-pale);
+width: 36px; height: 36px;
+border-radius: 50%;
+font-size: 18px;
+cursor: pointer;
+display: flex; align-items: center; justify-content: center;
+transition: all 0.2s;
+z-index: 10;
+}
+.modal-close:hover {
+background: var(--gold);
+color: var(--dark);
+}
+.modal-divider {
+width: 40px; height: 2px;
+background: var(--gold);
+margin: 16px 0;
+}
+.ornament {
+text-align: center;
+color: var(--gold);
+font-size: 20px;
+letter-spacing: 0.4em;
+margin: 50px 0 30px;
+}
+footer {
+background: var(--dark);
+color: rgba(245,233,196,0.5);
+text-align: center;
+padding: 28px 20px;
+font-size: 13px;
+letter-spacing: 0.12em;
+border-top: 1px solid rgba(184,149,42,0.2);
+}
+@media (max-width: 640px) {
+.stats { grid-template-columns: repeat(2, 1fr); }
+.photo-row { grid-template-columns: 1fr; }
+.photo-item { aspect-ratio: 16/9; }
+}
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(24px); }
+to { opacity: 1; transform: translateY(0); }
+}
+main { animation: fadeUp 0.7s ease both; }
+[data-lang] { display: none; }
+[data-lang].show { display: block; }
+[data-lang-inline] { display: none; }
+[data-lang-inline].show { display: inline; }
+</style>
+</head>
+<body>
+<nav>
+<button class="lang-btn active" onclick="setLang('mn')">🇲🇳 Монгол</button>
+<button class="lang-btn" onclick="setLang('en')">🇬🇧 English</button>
+<button class="lang-btn" onclick="setLang('jp')">🇯🇵 日本語</button>
+<button class="lang-btn" onclick="setLang('kr')">🇰🇷 한국어</button>
+<button class="lang-btn" onclick="setLang('cn')">🇨🇳 中文</button>
+</nav>
+<section class="hero">
+<div class="slideshow" id="slideshow">
+<div style="position:absolute;inset:0;background:linear-gradient(135deg,#3a2a0a,#1a1208);" class="visible"></div>
+</div>
+<div class="hero-overlay"></div>
+<div class="slide-controls">
+<button class="slide-btn" onclick="prevSlide()">‹</button>
+<button class="slide-btn" onclick="nextSlide()">›</button>
+</div>
+<div class="hero-text">
+<div class="hero-divider">✦ ✦ ✦</div>
+<h1 class="hero-title">
+<span data-lang="mn" class="show">Манзушир хийд</span>
+<span data-lang="en">Manzushir Monastery</span>
+<span data-lang="jp">マンズシル寺院</span>
+<span data-lang="kr">만주시르 사원</span>
+<span data-lang="cn">曼殊寺</span>
+</h1>
+<p class="hero-subtitle">
+<span data-lang="mn" class="show">Богдхан уулын түүх соёлын хосломол өв</span>
+<span data-lang="en">Cultural Heritage of Bogd Khan Mountain</span>
+<span data-lang="jp">ボグドハーン山の文化遺産</span>
+<span data-lang="kr">복드 칸 산의 문화 유산</span>
+<span data-lang="cn">博格达汗山的文化遗产</span>
+</p>
+<p class="hero-year">
+<span data-lang="mn" class="show">1733 онд байгуулагдсан</span>
+<span data-lang="en">Founded in 1733</span>
+<span data-lang="jp">1733年創立</span>
+<span data-lang="kr">1733년 설립</span>
+<span data-lang="cn">创建于1733年</span>
+</p>
+</div>
+</section>
+<div class="photo-row">
+<div class="photo-item" onclick="openModal(0)">
+<div style="width:100%;height:100%;background:linear-gradient(135deg,#5a4020,#3a2a0a);display:flex;align-items:center;justify-content:center;">
+<span style="color:rgba(245,233,196,0.3);font-size:48px;">🏔</span>
+</div>
+<div class="label">
+<span data-lang="mn" class="show">1930-аад он</span>
+<span data-lang="en">1930s</span>
+<span data-lang="jp">1930年代</span>
+<span data-lang="kr">1930년대</span>
+<span data-lang="cn">1930年代</span>
+</div>
+</div>
+<div class="photo-item" onclick="openModal(1)">
+<div style="width:100%;height:100%;background:linear-gradient(135deg,#4a6030,#2a3a15);display:flex;align-items:center;justify-content:center;">
+<span style="color:rgba(245,233,196,0.3);font-size:48px;">⛩</span>
+</div>
+<div class="label">
+<span data-lang="mn" class="show">Өнөөдөр</span>
+<span data-lang="en">Today</span>
+<span data-lang="jp">現在</span>
+<span data-lang="kr">현재</span>
+<span data-lang="cn">今天</span>
+</div>
+</div>
+<div class="photo-item" onclick="openModal(2)">
+<div style="width:100%;height:100%;background:linear-gradient(135deg,#3a4060,#1a2040);display:flex;align-items:center;justify-content:center;">
+<span style="color:rgba(245,233,196,0.3);font-size:48px;">🌄</span>
+</div>
+<div class="label">
+<span data-lang="mn" class="show">Манзушир хийд</span>
+<span data-lang="en">Manzushir Monastery</span>
+<span data-lang="jp">マンズシル寺院</span>
+<span data-lang="kr">만주시르 사원</span>
+<span data-lang="cn">曼殊寺</span>
+</div>
+</div>
+</div>
+<div class="audio-bar">
+<span class="audio-label" id="audioLabel">
+<span data-lang="mn" class="show">Аудио тайлбар сонсох</span>
+<span data-lang="en">Listen to audio guide</span>
+<span data-lang="jp">音声ガイドを聴く</span>
+<span data-lang="kr">오디오 가이드 듣기</span>
+<span data-lang="cn">收听音频导览</span>
+</span>
+<button class="audio-btn" id="playBtn" onclick="toggleAudio()">
+▶ <span data-lang="mn" class="show">Тоглуулах</span><span data-lang="en">Play</span><span data-lang="jp">再生</span><span data-lang="kr">재생</span><span data-lang="cn">播放</span>
+</button>
+<button class="audio-btn stop" id="stopBtn" onclick="stopAudio()" style="display:none">
+■ <span data-lang="mn" class="show">Зогсоох</span><span data-lang="en">Stop</span><span data-lang="jp">停止</span><span data-lang="kr">정지</span><span data-lang="cn">停止</span>
+</button>
+</div>
+<main>
+<div class="section-nav">
+<button class="section-btn active" onclick="showSection('history', event)">
+<span data-lang="mn" class="show">Түүх</span>
+<span data-lang="en">History</span>
+<span data-lang="jp">歴史</span>
+<span data-lang="kr">역사</span>
+<span data-lang="cn">历史</span>
+</button>
+<button class="section-btn" onclick="showSection('location', event)">
+<span data-lang="mn" class="show">Байршил</span>
+<span data-lang="en">Location</span>
+<span data-lang="jp">所在地</span>
+<span data-lang="kr">위치</span>
+<span data-lang="cn">位置</span>
+</button>
+<button class="section-btn" onclick="showSection('now', event)">
+<span data-lang="mn" class="show">Одоо</span>
+<span data-lang="en">Today</span>
+<span data-lang="jp">現在</span>
+<span data-lang="kr">현재</span>
+<span data-lang="cn">现在</span>
+</button>
+</div>
+<div class="content-section active" id="section-history">
+<div data-lang="mn" class="show">
+<p class="history-intro">
+Богд хан уул нь Монгол Улсын түүх, байгалийн нөөцийн хувьд онцгой ач холбогдолтой газар бөгөөд дэлхийн анхны дархан цаазат уулын статустай 1783 оноос эхлэн хамгаалалтад авсан газар юм. Улсын төв архивын албан баримтад 12-13 дугаар зууны үед Хэрэйд аймгийн Ван хаан Тоорил Богд хан уулыг тахиж, Туулын хар шугуйгаар нутаглаж байхдаа "Унасан газар угаасан усаа" гэх монгол хүний сэтгэлээр өөрийн эрх хэмжээнд онголон дархалсан түүхтэй. Манзушир гэдэг нь "Оюун билгийн тэнгэрийг сахих бурхан" гэсэн утгатай.
+</p>
+<div class="pull-quote">
+"Тухайн үедээ 20 дуган, 300 гаруй лам нартай, хийд нь шашин, соёл, боловсролын томоохон төв байсан."
+</div>
+<p class="history-body">
+Манзушир хийдийн анхны сүмийг Манзушир ламтны анхдугаар дүрийн хувилгаан Лувсанжамбалданзан 1733 онд Богд хан уулын энгэрт бариулснаар Манзуширын хийдийн суурь тавигджээ. 200 гаруй жилийн түүхтэй Манзуширын хийдийг 1937 онд нураан буулгах үед 21 барилга байгууламжтай байжээ. Хийдийн сүүлчийн хутагт Цэрэндорж тэргүүтэй нэр бүхий 50 гаруй ламыг баривчлан 1937 онд цаазалжээ.
+</p>
+</div>
+<div data-lang="en">
+<p class="history-intro">
+Bogd Khan Mountain holds exceptional historical and natural significance for Mongolia, and has been protected since 1783 as the world's first officially designated sacred mountain. Historical records from the 12th–13th centuries document that Toghrul Khan of the Kerait tribe venerated this mountain, protecting it within his domain with the traditional Mongolian spirit of stewardship. The name "Manzushir" means "the deity who guards the heavens of wisdom."
+</p>
+<div class="pull-quote">
+"At its peak, the monastery housed 20 temples and more than 300 lamas, serving as a major center of religion, culture, and education."
+</div>
+<p class="history-body">
+The first temple of Manzushir Monastery was founded in 1733 by Luvsanjambaldanzaan, the first reincarnation of the Manzushir Lama, on the slopes of Bogd Khan Mountain. By the time the complex was demolished in 1937, after more than 200 years of history, it comprised 21 structures. More than 50 named lamas, including the monastery's last reincarnate Tserendorj, were arrested and executed in 1937.
+</p>
+</div>
+<div data-lang="jp">
+<p class="history-intro">
+ボグドハーン山は、モンゴル国の歴史と自然遺産において特別な意義を持ち、世界初の公式聖山として1783年から保護されています。12〜13世紀のケレイト族のワン・ハーン（トグリル）がこの山を崇め、「祖先の地と水を守る」というモンゴルの精神で自らの権限の下に保護したという記録が残されています。「マンズシル」は「知恵の天を守る神」を意味します。
+</p>
+<div class="pull-quote">
+「最盛期には20のお堂と300人以上のラマ僧を擁し、宗教・文化・教育の重要な中心地でした。」
+</div>
+<p class="history-body">
+マンズシル寺院の最初の寺は、マンズシル・ラマの初代転生であるルブサンジャンバルダンザンによって1733年にボグドハーン山の麓に建立されました。200年以上の歴史を経て1937年に破壊された時、寺院には21棟の建物がありました。最後の転生活仏ツェレンドルジを含む50人以上の著名なラマ僧が逮捕・処刑されました。
+</p>
+</div>
+<div data-lang="kr">
+<p class="history-intro">
+복드 칸 산은 몽골의 역사와 자연자원 측면에서 특별한 의의를 지니며, 세계 최초의 공식 성산으로 1783년부터 보호되어 왔습니다. 12~13세기 케레이트 부족의 완 칸(토그룰)이 이 산을 경배하고 "조상의 땅과 물을 지킨다"는 몽골 정신으로 자신의 관할하에 보호했다는 역사적 기록이 있습니다. '만주시르'는 '지혜의 하늘을 지키는 신'을 의미합니다.
+</p>
+<div class="pull-quote">
+"전성기에는 20개의 법당과 300명 이상의 라마승을 보유하며 종교·문화·교육의 중요한 중심지였습니다."
+</div>
+<p class="history-body">
+만주시르 사원의 첫 번째 사원은 만주시르 라마의 초대 환생인 루브산잠발단잔이 1733년에 복드 칸 산 기슭에 세웠습니다. 200년 이상의 역사를 지닌 만주시르 사원은 1937년 철거될 당시 21채의 건물로 이루어져 있었습니다. 마지막 환생 활불 체렌도르지를 포함한 50명 이상의 저명한 라마승이 1937년 체포·처형되었습니다.
+</p>
+</div>
+<div data-lang="cn">
+<p class="history-intro">
+博格达汗山在蒙古的历史和自然资源方面具有特殊意义，自1783年起作为世界上第一座官方神山受到保护。根据历史档案，12至13世纪克烈部的王罕（脱斡邻）曾崇拜这座山，以蒙古人"守护祖先土地与水源"的精神在其管辖范围内加以保护。"曼殊"意为"守护智慧之天的神"。
+</p>
+<div class="pull-quote">
+"在鼎盛时期，寺院拥有20座殿堂和300余名喇嘛，是宗教、文化和教育的重要中心。"
+</div>
+<p class="history-body">
+曼殊寺的第一座寺庙由曼殊喇嘛的第一世转世降扎木巴勒丹赞于1733年在博格达汗山山麓建立。拥有200余年历史的曼殊寺在1937年被拆毁时共有21座建筑。包括最后一位转世活佛策仁道尔吉在内的50余名著名喇嘛于1937年被捕并处决。
+</p>
+</div>
+<div class="stats">
+<div class="stat">
+<span class="stat-number">1733</span>
+<div class="stat-label">
+<span data-lang="mn" class="show">Байгуулагдсан он</span>
+<span data-lang="en">Year founded</span>
+<span data-lang="jp">創立年</span>
+<span data-lang="kr">설립 연도</span>
+<span data-lang="cn">创建年份</span>
+</div>
+</div>
+<div class="stat">
+<span class="stat-number">300+</span>
+<div class="stat-label">
+<span data-lang="mn" class="show">Оргил үеийн лам нарын тоо</span>
+<span data-lang="en">Lamas at peak</span>
+<span data-lang="jp">最盛期のラマ僧数</span>
+<span data-lang="kr">전성기 라마승 수</span>
+<span data-lang="cn">鼎盛时期喇嘛人数</span>
+</div>
+</div>
+<div class="stat">
+<span class="stat-number">20</span>
+<div class="stat-label">
+<span data-lang="mn" class="show">Дуганы тоо</span>
+<span data-lang="en">Temple halls</span>
+<span data-lang="jp">法堂数</span>
+<span data-lang="kr">법당 수</span>
+<span data-lang="cn">殿堂数量</span>
+</div>
+</div>
+<div class="stat">
+<span class="stat-number">1990</span>
+<div class="stat-label">
+<span data-lang="mn" class="show">Сэргээн засварлалт эхэлсэн он</span>
+<span data-lang="en">Restoration began</span>
+<span data-lang="jp">修復開始年</span>
+<span data-lang="kr">복원 시작 연도</span>
+<span data-lang="cn">修复开始年份</span>
+</div>
+</div>
+</div>
+</div>
+<div class="content-section" id="section-location">
+<div data-lang="mn" class="show">
+<p class="location-text">Хийд нь Улаанбаатар хотоос баруун өмнө зүгт 43 км, Төв аймгийн Зуунмод хотоос 8 км зайд оршдог.</p>
+</div>
+<div data-lang="en">
+<p class="location-text">The monastery is located 43 km southwest of Ulaanbaatar city and 8 km from Zuunmod, the capital of Töv Province.</p>
+</div>
+<div data-lang="jp">
+<p class="location-text">寺院はウランバートル市から南西43km、トゥブ県の県庁所在地ズーンモドから8kmに位置しています。</p>
+</div>
+<div data-lang="kr">
+<p class="location-text">사원은 울란바토르에서 남서쪽으로 43km, 투브 아이막의 중심지 준모드에서 8km 거리에 위치해 있습니다.</p>
+</div>
+<div data-lang="cn">
+<p class="location-text">寺院位于乌兰巴托西南43公里处，距中央省省会宗莫德8公里。</p>
+</div>
+<div class="map-placeholder">
+📍 43°54'N 106°53'E · Bogd Khan Mountain, Mongolia
+</div>
+</div>
+<div class="content-section" id="section-now">
+<div data-lang="mn" class="show">
+<p class="now-text">Манзушир хийд нь музей болон шашин соёлын хэлбэрээр үйл ажиллагаа явуулж байна. Жил бүр мянга мянган жуулчин, сүсэгтэн зорин ирдэг ба хийдийн музейд түүх соёлын олдвор, түүхэн гэрэл зургууд зэрэг олон зүйлс хадгалагдаж байна.</p>
+</div>
+<div data-lang="en">
+<p class="now-text">Manzushir Monastery now operates as a museum and a religious-cultural site. Every year, thousands of tourists and pilgrims visit, and the monastery's museum houses historical artifacts, ancient photographs, and many other cultural relics.</p>
+</div>
+<div data-lang="jp">
+<p class="now-text">マンズシル寺院は現在、博物館および宗教文化施設として運営されています。毎年数千人の観光客や巡礼者が訪れ、寺院の博物館には歴史的遺物、古写真など多くの文化財が保存されています。</p>
+</div>
+<div data-lang="kr">
+<p class="now-text">만주시르 사원은 현재 박물관 및 종교·문화 시설로 운영되고 있습니다. 매년 수천 명의 관광객과 순례자들이 방문하며, 사원 박물관에는 역사 유물, 고대 사진 등 다양한 문화재가 보존되어 있습니다.</p>
+</div>
+<div data-lang="cn">
+<p class="now-text">曼殊寺目前作为博物馆和宗教文化场所运营。每年有数千名游客和信徒前来参观，寺院博物馆收藏着历史文物、珍贵照片等众多文化遗存。</p>
+</div>
+</div>
+<div class="ornament">· · ·</div>
+</main>
+<!-- MODAL -->
+<div class="modal-overlay" id="photoModal" onclick="closeModalOutside(event)">
+<div class="modal-box">
+<div class="modal-img-wrap" style="position:relative;">
+<button class="modal-close" onclick="closeModal()">✕</button>
+<div class="modal-placeholder" id="modalPlaceholder"></div>
+</div>
+<div class="modal-body">
+<div class="modal-era" id="modalEra"></div>
+<div class="modal-title" id="modalTitle"></div>
+<div class="modal-divider"></div>
+<div class="modal-text" id="modalText"></div>
+</div>
+</div>
+</div>
+<footer>
+© Манзушир хийдийн дижитал мэдээлэл · Богдхан уул, Монгол улс
+</footer>
+<script>
+let currentLang = 'mn';
+function setLang(lang) {
+currentLang = lang;
+document.querySelectorAll('[data-lang]').forEach(el => {
+el.classList.toggle('show', el.dataset.lang === lang);
+});
+document.querySelectorAll('[data-lang-inline]').forEach(el => {
+el.classList.toggle('show', el.dataset.langInline === lang);
+});
+document.querySelectorAll('.lang-btn').forEach((btn, i) => {
+const langs = ['mn','en','jp','kr','cn'];
+btn.classList.toggle('active', langs[i] === lang);
+});
+}
+function showSection(id, event) {
+document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+document.querySelectorAll('.section-btn').forEach(b => b.classList.remove('active'));
+document.getElementById('section-' + id).classList.add('active');
+if (event) event.currentTarget.classList.add('active');
+}
+let audioPlaying = false;
+let audioCtx = null;
+let audioInterval = null;
+function toggleAudio() {
+if (!audioPlaying) {
+audioPlaying = true;
+document.getElementById('playBtn').style.display = 'none';
+document.getElementById('stopBtn').style.display = 'flex';
+try {
+audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const notes = [220, 277.18, 329.63, 369.99, 440];
+let i = 0;
+function playNote() {
+if (!audioPlaying) return;
+const osc = audioCtx.createOscillator();
+const gain = audioCtx.createGain();
+osc.connect(gain);
+gain.connect(audioCtx.destination);
+osc.frequency.value = notes[i % notes.length];
+osc.type = 'sine';
+gain.gain.setValueAtTime(0, audioCtx.currentTime);
+gain.gain.linearRampToValueAtTime(0.08, audioCtx.currentTime + 0.5);
+gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 2.5);
+osc.start(audioCtx.currentTime);
+osc.stop(audioCtx.currentTime + 3);
+i++;
+audioInterval = setTimeout(playNote, 3000);
+}
+playNote();
+} catch(e) {}
+}
+}
+function stopAudio() {
+audioPlaying = false;
+clearTimeout(audioInterval);
+if (audioCtx) { audioCtx.close(); audioCtx = null; }
+document.getElementById('playBtn').style.display = 'flex';
+document.getElementById('stopBtn').style.display = 'none';
+}
+// ── PHOTO MODAL DATA ──
+const modalData = {
+mn: [
+{
+era: '1930-аад он',
+title: 'Хийдийн түүхэн үе',
+icon: '🏔',
+bg: 'linear-gradient(135deg,#5a4020,#3a2a0a)',
+text: '1930-аад оны үед Манзушир хийд нь Монголын нийгэм, шашин шүтлэгийн томоохон төв байсан. 300 гаруй лам нар оршин суун, 20 орчим дуган сүм мандан бадарч байв. Харамсалтай нь, 1937 онд социалист дэглэмийн үеийн хэлмэгдүүлэлтийн дүнд хийдийн ихэнх байгууламжийг нураан, олон ламыг цаазалжээ.'
+},
+{
+era: 'Өнөөдөр',
+title: 'Одоогийн байдал',
+icon: '⛩',
+bg: 'linear-gradient(135deg,#4a6030,#2a3a15)',
+text: 'Өнөөдөр Манзушир хийд нь музей болон шашин соёлын газар болон үйл ажиллагаа явуулж байна. 1990 оноос эхлэн сэргээн засварлах ажил хийгдэж, жил бүр мянга мянган жуулчин болон сүсэгтнүүд зочилдог. Хийдийн музейд түүх соёлын олдвор, түүхэн гэрэл зургууд хадгалагдаж байна.'
+},
+{
+era: 'Манзушир хийд',
+title: 'Хийдийн тухай',
+icon: '🌄',
+bg: 'linear-gradient(135deg,#3a4060,#1a2040)',
+text: 'Манзушир хийд нь Богд хан уулын өвөр талд, далайн түвшнээс 1800 метр өндөрт оршдог. "Манзушир" гэдэг нь "Оюун билгийн тэнгэрийг сахих бурхан" гэсэн утгатай. Хийд нь 1733 онд Манзушир ламтны анхдугаар дүрийн хувилгаан Лувсанжамбалданзан байгуулжээ. Богд хан уул нь дэлхийн анхны дархан цаазат уулын нэг юм.'
+}
+],
+en: [
+{
+era: '1930s',
+title: 'The Historical Era',
+icon: '🏔',
+bg: 'linear-gradient(135deg,#5a4020,#3a2a0a)',
+text: 'In the 1930s, Manzushir Monastery was a major center of Mongolian society and religious life, home to more than 300 lamas and nearly 20 temple halls. Tragically, during the socialist purges of 1937, most of the monastery\'s structures were demolished and many lamas were executed.'
+},
+{
+era: 'Today',
+title: 'Present Day',
+icon: '⛩',
+bg: 'linear-gradient(135deg,#4a6030,#2a3a15)',
+text: 'Today, Manzushir Monastery operates as a museum and religious-cultural site. Restoration work began in 1990, and every year thousands of tourists and pilgrims visit. The monastery\'s museum houses historical artifacts and rare photographs.'
+},
+{
+era: 'Manzushir Monastery',
+title: 'About the Monastery',
+icon: '🌄',
+bg: 'linear-gradient(135deg,#3a4060,#1a2040)',
+text: 'Manzushir Monastery stands on the southern slopes of Bogd Khan Mountain, at an elevation of approximately 1,800 meters. The name "Manzushir" means "the deity who guards the heavens of wisdom." It was founded in 1733 by Luvsanjambaldanzaan, the first reincarnation of the Manzushir Lama. Bogd Khan Mountain is one of the world\'s first officially protected sacred mountains.'
+}
+],
+jp: [
+{
+era: '1930年代',
+title: '歴史的時代',
+icon: '🏔',
+bg: 'linear-gradient(135deg,#5a4020,#3a2a0a)',
+text: '1930年代、マンズシル寺院はモンゴルの社会と宗教生活の重要な中心地であり、300人以上のラマ僧と約20の法堂を有していました。しかし1937年の社会主義政権による弾圧で、ほとんどの建物が破壊され、多くのラマ僧が処刑されました。'
+},
+{
+era: '現在',
+title: '現在の状況',
+icon: '⛩',
+bg: 'linear-gradient(135deg,#4a6030,#2a3a15)',
+text: '現在、マンズシル寺院は博物館および宗教文化施設として運営されています。1990年から修復工事が始まり、毎年数千人の観光客と巡礼者が訪れます。博物館には歴史的遺物や貴重な写真が保存されています。'
+},
+{
+era: 'マンズシル寺院',
+title: '寺院について',
+icon: '🌄',
+bg: 'linear-gradient(135deg,#3a4060,#1a2040)',
+text: 'マンズシル寺院はボグドハーン山の南斜面、海抜約1,800メートルに位置します。「マンズシル」は「知恵の天を守る神」を意味します。1733年にマンズシル・ラマの初代転生ルブサンジャンバルダンザンによって創建されました。ボグドハーン山は世界最初の公式保護聖山の一つです。'
+}
+],
+kr: [
+{
+era: '1930년대',
+title: '역사적 시대',
+icon: '🏔',
+bg: 'linear-gradient(135deg,#5a4020,#3a2a0a)',
+text: '1930년대 만주시르 사원은 몽골 사회와 종교 생활의 주요 중심지로, 300명 이상의 라마승과 약 20개의 법당을 보유했습니다. 안타깝게도 1937년 사회주의 정권의 탄압으로 대부분의 건물이 철거되고 많은 라마승이 처형되었습니다.'
+},
+{
+era: '현재',
+title: '현재 상황',
+icon: '⛩',
+bg: 'linear-gradient(135deg,#4a6030,#2a3a15)',
+text: '현재 만주시르 사원은 박물관 및 종교·문화 시설로 운영되고 있습니다. 1990년부터 복원 작업이 시작되었으며, 매년 수천 명의 관광객과 순례자들이 방문합니다. 박물관에는 역사 유물과 귀중한 사진들이 보존되어 있습니다.'
+},
+{
+era: '만주시르 사원',
+title: '사원 소개',
+icon: '🌄',
+bg: 'linear-gradient(135deg,#3a4060,#1a2040)',
+text: '만주시르 사원은 복드 칸 산 남쪽 기슭, 해발 약 1,800미터에 위치합니다. "만주시르"는 "지혜의 하늘을 지키는 신"을 의미합니다. 1733년 만주시르 라마의 초대 환생 루브산잠발단잔이 창건했습니다. 복드 칸 산은 세계 최초의 공식 보호 성산 중 하나입니다.'
+}
+],
+cn: [
+{
+era: '1930年代',
+title: '历史时期',
+icon: '🏔',
+bg: 'linear-gradient(135deg,#5a4020,#3a2a0a)',
+text: '1930年代，曼殊寺是蒙古社会和宗教生活的重要中心，拥有300余名喇嘛和近20座殿堂。遗憾的是，1937年社会主义政权镇压期间，寺院大部分建筑被拆毁，许多喇嘛遭到处决。'
+},
+{
+era: '今天',
+title: '现状',
+icon: '⛩',
+bg: 'linear-gradient(135deg,#4a6030,#2a3a15)',
+text: '如今，曼殊寺作为博物馆和宗教文化场所运营。自1990年起开始修复工作，每年吸引数千名游客和信徒前来参观。博物馆收藏着历史文物和珍贵照片。'
+},
+{
+era: '曼殊寺',
+title: '寺院简介',
+icon: '🌄',
+bg: 'linear-gradient(135deg,#3a4060,#1a2040)',
+text: '曼殊寺位于博格达汗山南坡，海拔约1800米。"曼殊"意为"守护智慧之天的神"。1733年由曼殊喇嘛第一世转世降扎木巴勒丹赞创建。博格达汗山是世界上最早受到官方保护的圣山之一。'
+}
+]
+};
+
+function openModal(idx) {
+const lang = currentLang in modalData ? currentLang : 'mn';
+const d = modalData[lang][idx];
+document.getElementById('modalEra').textContent = d.era;
+document.getElementById('modalTitle').textContent = d.title;
+document.getElementById('modalText').textContent = d.text;
+const ph = document.getElementById('modalPlaceholder');
+ph.style.background = d.bg;
+ph.innerHTML = '<span style="font-size:80px;opacity:0.35">' + d.icon + '</span>';
+document.getElementById('photoModal').classList.add('open');
+document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+document.getElementById('photoModal').classList.remove('open');
+document.body.style.overflow = '';
+}
+function closeModalOutside(e) {
+if (e.target === document.getElementById('photoModal')) closeModal();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+// ── END MODAL ──
+</script>
+</body>
+</html>
